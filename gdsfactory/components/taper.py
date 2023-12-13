@@ -86,7 +86,7 @@ def taper(
         for layer in layers_cladding or []:
             c.add_polygon(points, layer=layer)
 
-    c.info["length"] = float(length)
+    c.info["length"] = length
     c.info["width1"] = float(width1)
     c.info["width2"] = float(width2)
     return c
@@ -155,7 +155,7 @@ def taper_strip_to_ridge(
         c.add(taper_ref)
         c.absorb(taper_ref)
 
-    c.info["length"] = float(length)
+    c.info["length"] = length
     c.add_port(name="o1", port=taper_wg.ports["o1"])
     c.add_port(name="o2", port=taper_slab.ports["o2"])
 

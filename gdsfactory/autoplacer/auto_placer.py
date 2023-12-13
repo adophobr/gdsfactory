@@ -45,14 +45,14 @@ class AutoPlacer(pya.Layout):
         self.max_height = max_height
         global COUNTER, AUTOPLACER_REGISTRY
         if name in ap.AUTOPLACER_REGISTRY:
-            self.name = "{}_{}".format(name, ap.COUNTER)
+            self.name = f"{name}_{ap.COUNTER}"
             ap.COUNTER += 1
         else:
             self.name = name
         ap.AUTOPLACER_REGISTRY[self.name] = self
 
         # Register
-        ap.WORKING_MEMORY["__AutoPlacer_{}".format(self.name)] = self
+        ap.WORKING_MEMORY[f"__AutoPlacer_{self.name}"] = self
 
         # Create the quadtree which will enable efficient queries
         bbox = (0, 0, self.max_width, self.max_height)
@@ -232,12 +232,7 @@ class AutoPlacer(pya.Layout):
         coordinate = self.find_space(cell, origin, direction)
         if coordinate is None:
             raise ap.OutOfSpaceError(
-                "Out of space for {} ({} x {} mm) in {}".format(
-                    cell.name,
-                    cell.bbox().width() / 1e6,
-                    cell.bbox().height() / 1e6,
-                    self.name,
-                )
+                f"Out of space for {cell.name} ({cell.bbox().width() / 1000000.0} x {cell.bbox().height() / 1000000.0} mm) in {self.name}"
             )
         else:
             self.pack_manual(cell, *coordinate)
@@ -321,7 +316,7 @@ class AutoPlacer(pya.Layout):
 
         # Get the name from the longest common substring
         if name is None:
-            name = ap.longest_common_prefix([c.name for c in cells]) + "_g"
+            name = f"{ap.longest_common_prefix([c.name for c in cells])}_g"
             name = name if len(name) > 2 else "Misc"
 
         # Make the block with approriate size
@@ -383,7 +378,7 @@ class AutoPlacer(pya.Layout):
     def pack_lumped(self, cells, width, height, origin=ap.SOUTH_WEST):
         """Pack at random in a lump"""
         # Get the name from the longest common substring
-        name = ap.longest_common_prefix([c.name for c in cells]) + "_l"
+        name = f"{ap.longest_common_prefix([c.name for c in cells])}_l"
         name = name if len(name) > 2 else "Misc"
 
         # Make an autoplacer

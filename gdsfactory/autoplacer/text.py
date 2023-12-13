@@ -36,7 +36,7 @@ def add_text(
     x, y = position
     w = si.width()
     h = si.height()
-    c = cell.layout().create_cell("TEXT_{}".format(text))
+    c = cell.layout().create_cell(f"TEXT_{text}")
     n = len(text)
 
     if align_x == "center":
@@ -46,10 +46,10 @@ def add_text(
     else:
         dx = 0
 
-    if align_y == "top":
-        dy = -h
-    elif align_y == "center":
+    if align_y == "center":
         dy = -h / 2
+    elif align_y == "top":
+        dy = -h
     else:
         dy = 0
 

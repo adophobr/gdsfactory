@@ -55,10 +55,10 @@ def route_south(
         west ports on the west of the box
     """
     excluded_ports = excluded_ports or []
-    assert optical_routing_type in [
+    assert optical_routing_type in {
         1,
         2,
-    ], f"optical_routing_type = {optical_routing_type}, not supported "
+    }, f"optical_routing_type = {optical_routing_type}, not supported "
 
     optical_ports = list(select_ports(component.ports).values())
     optical_ports = [p for p in optical_ports if p.name not in excluded_ports]
@@ -91,7 +91,7 @@ def route_south(
     direction_ports = direction_ports_from_list_ports(optical_ports)
 
     north_ports = direction_ports["N"]
-    north_start = north_ports[0 : len(north_ports) // 2]
+    north_start = north_ports[:len(north_ports) // 2]
     north_finish = north_ports[len(north_ports) // 2 :]
 
     west_ports = direction_ports["W"]
@@ -112,7 +112,7 @@ def route_south(
 
     west_ports.reverse()
 
-    y0 = min([p.y for p in ordered_ports]) - dy - 0.5
+    y0 = min(p.y for p in ordered_ports) - dy - 0.5
 
     ports_to_route = []
 
@@ -163,7 +163,7 @@ def route_south(
     # This ensures that north ports are routed above the top west one
     north_start.reverse()  # We need them from left to right
     if len(north_start) > 0:
-        y_max = max([p.y for p in west_ports + north_start])
+        y_max = max(p.y for p in west_ports + north_start)
         for p in north_start:
             tmp_port = gen_port_from_port(x, y0, p)
 
@@ -223,7 +223,7 @@ def route_south(
     # Route the remaining north ports
     start_straight_length = 0.5
     if len(north_finish) > 0:
-        y_max = max([p.y for p in east_ports + north_finish])
+        y_max = max(p.y for p in east_ports + north_finish)
         for p in north_finish:
             tmp_port = gen_port_from_port(x, y0, p)
             ports_to_route.append(tmp_port)

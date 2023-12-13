@@ -64,9 +64,7 @@ class SizeInfo:
         return self.get_rect()
 
     def __str__(self):
-        return "w: {}\ne: {}\ns: {}\nn: {}\n".format(
-            self.west, self.east, self.south, self.north
-        )
+        return f"w: {self.west}\ne: {self.east}\ns: {self.south}\nn: {self.north}\n"
 
 
 def _rotate_points(
@@ -373,13 +371,13 @@ class ComponentReference(DeviceReference):
         """
         if angle == 0:
             return self
-        if isinstance(center, str) or isinstance(center, int):
+        if isinstance(center, (str, int)):
             center = self.ports[center].position
 
         if isinstance(center, Port):
             center = center.midpoint
         self.rotation += angle
-        self.rotation = self.rotation % 360
+        self.rotation %= 360
         self.origin = _rotate_points(self.origin, angle, center)
         self._bb_valid = False
         return self

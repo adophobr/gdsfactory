@@ -61,23 +61,15 @@ def route_ports_to_side(
     if isinstance(ports, dict):
         ports = list(ports.values())
 
-    elif isinstance(ports, Component) or isinstance(ports, ComponentReference):
+    elif isinstance(ports, (Component, ComponentReference)):
         ports = list(ports.ports.values())
 
     # Choose which
-    if side in ["north", "south"]:
+    if side in {"north", "south"}:
         func_route = route_ports_to_y
-        if y is not None:
-            xy = y
-        else:
-            xy = side
-
-    elif side in ["west", "east"]:
-        if x is not None:
-            xy = x
-        else:
-            xy = side
-
+        xy = y if y is not None else side
+    elif side in {"west", "east"}:
+        xy = x if x is not None else side
         func_route = route_ports_to_x
     else:
         raise ValueError(f"side = {side} not valid (north, south, west, east)")
@@ -175,9 +167,9 @@ def route_ports_to_x(
         extension_length = -extension_length
 
     if x == "east":
-        x = max([p.x for p in list_ports]) + a
+        x = max(p.x for p in list_ports) + a
     elif x == "west":
-        x = min([p.x for p in list_ports]) - a
+        x = min(p.x for p in list_ports) - a
     elif isinstance(x, (float, int)):
         pass
     else:
@@ -205,7 +197,7 @@ def route_ports_to_x(
     forward_ports.sort(key=sort_key_south_to_north)
 
     backward_ports.sort(key=sort_key_south_to_north)
-    backward_ports_thru_south = backward_ports[0:backward_port_side_split_index]
+    backward_ports_thru_south = backward_ports[:backward_port_side_split_index]
     backward_ports_thru_north = backward_ports[backward_port_side_split_index:]
     backward_ports_thru_south.sort(key=sort_key_south_to_north)
     backward_ports_thru_north.sort(key=sort_key_north_to_south)
@@ -359,20 +351,22 @@ def route_ports_to_y(
 
     if y == "north":
         y = (
-            max([p.y + a * np.abs(np.cos(p.angle * np.pi / 180)) for p in list_ports])
+            max(
+                p.y + a * np.abs(np.cos(p.angle * np.pi / 180))
+                for p in list_ports
+            )
             + epsilon
         )
     elif y == "south":
         y = (
-            min([p.y - a * np.abs(np.cos(p.angle * np.pi / 180)) for p in list_ports])
+            min(
+                p.y - a * np.abs(np.cos(p.angle * np.pi / 180))
+                for p in list_ports
+            )
             - epsilon
         )
     elif isinstance(y, float):
         pass
-    else:
-        pass
-        # raise ValueError('``y`` should be a float or "north" or "south"')
-
     if y <= min(ys):
         sort_key_east = sort_key_south_to_north
         sort_key_west = sort_key_south_to_north
@@ -395,7 +389,7 @@ def route_ports_to_y(
     backward_ports.sort(key=sort_key_east_to_west)
 
     backward_ports.sort(key=sort_key_west_to_east)
-    backward_ports_thru_west = backward_ports[0:backward_port_side_split_index]
+    backward_ports_thru_west = backward_ports[:backward_port_side_split_index]
     backward_ports_thru_east = backward_ports[backward_port_side_split_index:]
 
     backward_ports_thru_west.sort(key=sort_key_west_to_east)
@@ -491,14 +485,14 @@ def _sample_route_side() -> Component:
     for i, y in enumerate(ys):
         p0 = (xl, y)
         p1 = (xr, y)
-        c.add_port(name="W{}".format(i), midpoint=p0, orientation=180, width=0.5)
-        c.add_port(name="E{}".format(i), midpoint=p1, orientation=0, width=0.5)
+        c.add_port(name=f"W{i}", midpoint=p0, orientation=180, width=0.5)
+        c.add_port(name=f"E{i}", midpoint=p1, orientation=0, width=0.5)
 
     for i, x in enumerate(xs):
         p0 = (x, yb)
         p1 = (x, yt)
-        c.add_port(name="S{}".format(i), midpoint=p0, orientation=270, width=0.5)
-        c.add_port(name="N{}".format(i), midpoint=p1, orientation=90, width=0.5)
+        c.add_port(name=f"S{i}", midpoint=p0, orientation=270, width=0.5)
+        c.add_port(name=f"N{i}", midpoint=p1, orientation=90, width=0.5)
 
     return c
 

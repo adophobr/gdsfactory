@@ -28,12 +28,11 @@ def merge_json(
             cells.update(data.get("cells"))
 
     does = {d.stem: json.loads(open(d).read()) for d in doe_directory.glob("**/*.json")}
-    metadata = dict(
+    return dict(
         json_version=json_version,
         cells=cells,
         does=does,
     )
-    return metadata
 
 
 if __name__ == "__main__":

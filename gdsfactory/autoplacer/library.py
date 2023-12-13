@@ -56,15 +56,15 @@ class Library(object):
 
     def load_all_gds(self) -> None:
         """Loads all the gds files"""
-        filenames = glob.glob(self.root + "/*.gds")
-        print("Loading {} GDS files...".format(len(filenames)))
+        filenames = glob.glob(f"{self.root}/*.gds")
+        print(f"Loading {len(filenames)} GDS files...")
         for filename in filenames:
             self.load_gds(filename)
         print("Done")
 
     def load_all_json(self) -> None:
         """loads all the json files"""
-        filenames = glob.glob(self.root + "/*.json")
+        filenames = glob.glob(f"{self.root}/*.json")
         for filename in filenames:
             self.load_json(filename)
 
@@ -104,7 +104,7 @@ class Library(object):
             cells = sorted(cells, key=area, reverse=True)
 
         else:
-            print("Warning: no cells found for {}".format(regex))
+            print(f"Warning: no cells found for {regex}")
 
         return CellList(cells)
 
@@ -128,7 +128,7 @@ class Library(object):
         if cells:
             cells = sorted(cells, key=area, reverse=True)
         else:
-            print("Warning: no cells found for {}".format(regex))
+            print(f"Warning: no cells found for {regex}")
 
         return CellList(cells)
 
@@ -145,19 +145,13 @@ class Library(object):
         for name in sorted(self.cells.keys()):
             print("-", name)
 
-        if self.does and False:
-            print()
-            print("DOEs:")
-            for key, value in self.does.items():
-                print(" - {} ({})".format(key, len(value)))
-
     def count(self):
         """Safety check at the end"""
         if self.cells:
-            print("{} cells were not used".format(len(self.cells)))
+            print(f"{len(self.cells)} cells were not used")
 
     def __str__(self):
-        return "<collection of {} cells>".format(len(self.cells))
+        return f"<collection of {len(self.cells)} cells>"
 
 
 if __name__ == "__main__":

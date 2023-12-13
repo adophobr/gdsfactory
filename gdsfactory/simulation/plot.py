@@ -31,12 +31,11 @@ def plot_sparameters(
     ]
 
     for key in keys:
-        if key in df:
-            y = df[key]
-            y = 20 * np.log10(y) if logscale else y
-            plt.plot(w, y, label=key[:-1])
-        else:
+        if key not in df:
             raise ValueError(f"{key} not in {df.keys()}")
+        y = df[key]
+        y = 20 * np.log10(y) if logscale else y
+        plt.plot(w, y, label=key[:-1])
     plt.legend()
     plt.xlabel("wavelength (nm)")
     plt.ylabel("|S| (dB)") if logscale else plt.ylabel("|S|")

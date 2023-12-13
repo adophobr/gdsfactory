@@ -68,7 +68,7 @@ def pad_array(
     c.info["size"] = size
 
     c.add_array(pad, columns=columns, rows=rows, spacing=spacing)
-    width = size[0] if orientation in [90, 270] else size[1]
+    width = size[0] if orientation in {90, 270} else size[1]
 
     for col in range(columns):
         for row in range(rows):

@@ -120,14 +120,13 @@ def get_input_label_electrical(
 
     text = f"elec_{gc_index}_({name})_{port.name}"
     layer, texttype = pd._parse_layer(layer_label)
-    label = Label(
+    return Label(
         text=text,
         position=port.midpoint,
         anchor="o",
         layer=layer,
         texttype=texttype,
     )
-    return label
 
 
 def add_labels(

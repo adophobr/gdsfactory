@@ -30,8 +30,7 @@ add_tm = gf.partial(
 def coupler_te(gap: float, length: float) -> Component:
     """Directional coupler with TE grating couplers."""
     c = gf.components.coupler(gap=gap, length=length)
-    cc = add_te(c)
-    return cc
+    return add_te(c)
 
 
 @gf.cell
@@ -44,12 +43,11 @@ def spiral_te(width: float = 0.5, length: float = 20e3) -> Component:
     """
     c = spiral_inner_io(width=width, length=length)
     c = gf.components.extend_ports(c)
-    cc = add_grating_couplers_with_loopback_fiber_array(
+    return add_grating_couplers_with_loopback_fiber_array(
         component=c,
         grating_coupler=gf.components.grating_coupler_elliptical_te,
         bend=gf.components.bend_circular,
     )
-    return cc
 
 
 @gf.cell
@@ -62,12 +60,11 @@ def spiral_tm(width: float = 0.5, length: float = 20e3) -> Component:
     """
     c = spiral_inner_io(width=width, length=length, dx=10, dy=10, N=5)
     c = gf.components.extend_ports(c)
-    cc = add_grating_couplers_with_loopback_fiber_array(
+    return add_grating_couplers_with_loopback_fiber_array(
         component=c,
         grating_coupler=gf.components.grating_coupler_elliptical_tm,
         bend=gf.components.bend_circular,
     )
-    return cc
 
 
 component_factory = dict(

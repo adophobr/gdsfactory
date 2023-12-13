@@ -172,10 +172,7 @@ def _name_to_description(name_str) -> str:
     if name_str is None:
         raise IOError(f"layer {name_str} has no name")
     fields = name_str.split()
-    description = ""
-    if len(fields) > 1:
-        description = " ".join(fields[1:])
-    return description
+    return " ".join(fields[1:]) if len(fields) > 1 else ""
 
 
 def _add_layer(entry, lys: LayerSet) -> LayerSet:

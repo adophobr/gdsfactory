@@ -67,11 +67,7 @@ class SizeInfo:
             bbox = None
             for layer_id in layer_indexes:
                 per_layer_bbox = cell.bbox_per_layer(layer_id)
-                if bbox is None:
-                    bbox = per_layer_bbox
-                else:
-                    bbox = bbox + per_layer_bbox
-
+                bbox = per_layer_bbox if bbox is None else bbox + per_layer_bbox
         self.box = bbox
 
         self.west = self.box.left / um_to_grid
@@ -103,9 +99,7 @@ class SizeInfo:
         return [(w, s), (e, s), (e, n), (w, n)]
 
     def __str__(self):
-        return "w: {}\ne: {}\ns: {}\nn: {}\n".format(
-            self.west, self.east, self.south, self.north
-        )
+        return f"w: {self.west}\ne: {self.east}\ns: {self.south}\nn: {self.north}\n"
 
 
 def placer_grid_cell_refs(
@@ -125,8 +119,7 @@ def placer_grid_cell_refs(
 
     if rows * cols < len(cells):
         raise ValueError(
-            "Shape ({}, {}): Not enough emplacements ({}) for all these components"
-            " ({}).".format(rows, cols, len(indices), len(cells))
+            f"Shape ({rows}, {cols}): Not enough emplacements ({len(indices)}) for all these components ({len(cells)})."
         )
     components = []
     for cell, (i, j) in zip(cells, indices):
@@ -194,11 +187,7 @@ def pack_row(
             f"Got {len(cells)} cells for {len(row_ids)} row ids"
         )
 
-    # Find the height of each row to fit the cells
-    # Also group the cells by row
-
-    unique_row_ids = list(set(row_ids))
-    unique_row_ids.sort()
+    unique_row_ids = sorted(set(row_ids))
     _row_to_heights = {r: [] for r in set(row_ids)}
     row_to_cells = {r: [] for r in unique_row_ids}
     for row, h, cell in zip(row_ids, heights, cells):
@@ -308,11 +297,7 @@ def pack_col(
             f"Got {len(cells)} cells for {len(col_ids)} col ids"
         )
 
-    # Find the width of each column to fit the cells
-    # Also group the cells by column
-
-    unique_col_ids = list(set(col_ids))
-    unique_col_ids.sort()
+    unique_col_ids = sorted(set(col_ids))
     _col_to_widths = {r: [] for r in set(col_ids)}
     col_to_cells = {r: [] for r in unique_col_ids}
     for col, w, cell in zip(col_ids, widths, cells):
@@ -385,7 +370,7 @@ def placer_fixed_coords(
     if do_permutation:
         coords = [(_x, _y) for _x in x for _y in y]
     else:
-        coords = [(_x, _y) for _x, _y in zip(x, y)]
+        coords = list(zip(x, y))
 
     # Update origin
     coords = [(c[0] + x0, c[1] + y0) for c in coords]
@@ -457,9 +442,7 @@ def load_doe(doe_name: str, doe_root: Path) -> List[Layout]:
             else:
                 # Otherwise load the GDS from the current folder
                 component_names = line.split(" , ")
-                gdspaths = [
-                    os.path.join(doe_dir, name + ".gds") for name in component_names
-                ]
+                gdspaths = [os.path.join(doe_dir, f"{name}.gds") for name in component_names]
                 cells = [load_gds(gdspath) for gdspath in gdspaths]
 
         # print("LOAD DOE")
@@ -502,13 +485,10 @@ def update_dicts_recurse(
     for k, v in default_dict.items():
         if k not in target_dict:
             vtype = type(v)
-            if vtype == dict or vtype == collections.OrderedDict:
-                target_dict[k] = v.copy()  # To avoid issues when popping
-            else:
-                target_dict[k] = v
+            target_dict[k] = v.copy() if vtype in [dict, collections.OrderedDict] else v
         else:
             vtype = type(target_dict[k])
-            if vtype == dict or vtype == collections.OrderedDict:
+            if vtype in [dict, collections.OrderedDict]:
                 target_dict[k] = update_dicts_recurse(target_dict[k], default_dict[k])
     return target_dict
 
@@ -583,7 +563,9 @@ def place_from_yaml(
         # unique names. So one instance per cell
 
         if components:
-            if len(components) != len(set([_c.top_cell().name for _c in components])):
+            if len(components) != len(
+                {_c.top_cell().name for _c in components}
+            ):
                 __dict_component_debug = {}
                 for _c in components:
                     _name = _c.top_cell().name
@@ -610,9 +592,7 @@ def place_from_yaml(
             "y0": default_y0,
         }
         settings = default_placer_settings.copy()
-        placer = doe.get("placer")
-
-        if placer:
+        if placer := doe.get("placer"):
             placer_type = placer.pop("type", "pack_col")
             settings.update(doe["placer"])
         else:
@@ -808,7 +788,7 @@ def assemble_subdies(
         mask_directory = subdies_directory
 
     for subdie_name, (x_um, y_um, R) in dict_subdies.items():
-        gdspath = os.path.join(subdies_directory, subdie_name + ".gds")
+        gdspath = os.path.join(subdies_directory, f"{subdie_name}.gds")
         subdie = load_gds(gdspath).top_cell()
 
         _subdie = import_cell(top_level_layout, subdie)
@@ -818,7 +798,7 @@ def assemble_subdies(
         subdie_instance = pya.CellInstArray(_subdie.cell_index(), t)
         top_level.insert(subdie_instance)
 
-    top_level.write(os.path.join(mask_directory, mask_name + ".gds"))
+    top_level.write(os.path.join(mask_directory, f"{mask_name}.gds"))
     return top_level
 
 

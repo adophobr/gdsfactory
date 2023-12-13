@@ -16,18 +16,16 @@ class CellList:
 
     def find_origin(self, cell):
         """finds the displacement of the origin"""
-        origins = []
-        for instance in cell.each_inst():
-            if instance.cell.name.endswith("t_c"):
-                origins.append(instance.trans.disp)
-
-        if origins:
+        if origins := [
+            instance.trans.disp
+            for instance in cell.each_inst()
+            if instance.cell.name.endswith("t_c")
+        ]:
             return pya.Point(
                 ap.mean([o.x for o in origins]), ap.mean([o.y for o in origins])
             )
-        else:
-            bbox = cell.bbox()
-            return pya.Point(-bbox.left, -bbox.bottom)
+        bbox = cell.bbox()
+        return pya.Point(-bbox.left, -bbox.bottom)
 
     def align(self, dimension=ap.BOTH):
         """Aligns the grating couplers"""
@@ -59,7 +57,7 @@ class CellList:
         max_height = max(cell.bbox().height() for cell in self.cells)
         for cell in self.cells:
             bbox = cell.bbox()
-            if not (bbox.width() == max_width and bbox.height == max_height):
+            if bbox.width() != max_width or bbox.height != max_height:
                 dx = max_width - bbox.width() if dimension in (ap.WIDTH, ap.BOTH) else 0
                 dy = (
                     max_height - bbox.height()
@@ -121,8 +119,7 @@ class CellList:
 
     def __iter__(self):
         """allow for cell in celllist"""
-        for cell in sorted(self.cells, key=ap.area):
-            yield cell
+        yield from sorted(self.cells, key=ap.area)
 
     def __getitem__(self, index):
         """allow for cell in celllist"""
@@ -132,7 +129,7 @@ class CellList:
         return len(self.cells)
 
     def __str__(self):
-        s = "\n".join(" - " + c.name for c in self.cells[:3])
+        s = "\n".join(f" - {c.name}" for c in self.cells[:3])
         if len(self.cells) > 3:
             s += "\n..."
-        return "list of {} cells:\n{}".format(len(self.cells), s)
+        return f"list of {len(self.cells)} cells:\n{s}"

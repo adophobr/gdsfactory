@@ -56,8 +56,7 @@ def pixelate_path(
 def points_to_shapely(pts):
     from shapely.geometry.polygon import Polygon
 
-    p = Polygon(pts)
-    return p
+    return Polygon(pts)
 
 
 def _snap_to_resolution(a, snap_res):

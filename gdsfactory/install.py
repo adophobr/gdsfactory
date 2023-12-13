@@ -45,10 +45,7 @@ def install_gdsdiff() -> None:
 
 
 def get_klayout_path() -> pathlib.Path:
-    if sys.platform == "win32":
-        klayout_folder = "KLayout"
-    else:
-        klayout_folder = ".klayout"
+    klayout_folder = "KLayout" if sys.platform == "win32" else ".klayout"
     home = pathlib.Path.home()
     return home / klayout_folder
 
@@ -88,11 +85,7 @@ def copy(src: pathlib.Path, dest: pathlib.Path) -> None:
 
 
 def install_generic_tech() -> None:
-    if sys.platform == "win32":
-        klayout_folder = "KLayout"
-    else:
-        klayout_folder = ".klayout"
-
+    klayout_folder = "KLayout" if sys.platform == "win32" else ".klayout"
     cwd = pathlib.Path(__file__).resolve().parent
     home = pathlib.Path.home()
     src = cwd / "klayout" / "tech"

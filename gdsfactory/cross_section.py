@@ -128,13 +128,14 @@ class CrossSection(BaseModel):
         return v
 
     def to_dict(self):
-        d = {}
         x = self.copy()
-        d["sections"] = [dict(section) for section in x.sections if section]
-        d["ports"] = x.ports
-        d["port_types"] = x.port_types
-        d["aliases"] = x.aliases
-        d["info"] = x.info
+        d = {
+            "sections": [dict(section) for section in x.sections if section],
+            "ports": x.ports,
+            "port_types": x.port_types,
+            "aliases": x.aliases,
+            "info": x.info,
+        }
         if hasattr(self, "cross_sections"):
             d["cross_sections"] = [x.to_dict() for x in self.cross_sections]
         return d
@@ -770,10 +771,10 @@ def rib_heater_doped_contact(
         slab_offset = slab_offset
     elif with_top_heater:
         slab_width = width + heater_gap + heater_width + slab_gap
-        slab_offset = slab_offset - slab_width / 2
+        slab_offset -= slab_width / 2
     elif with_bot_heater:
         slab_width = width + heater_gap + heater_width + slab_gap
-        slab_offset = slab_offset + slab_width / 2
+        slab_offset += slab_width / 2
 
     heater_offset = width / 2 + heater_gap + heater_width / 2
     contact_offset = width / 2 + contact_gap + contact_width / 2

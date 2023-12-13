@@ -128,7 +128,7 @@ def _get_bundle_udirect_waypoints(
                 len(ports1), len(ports2)
             )
         )
-    if len(set([p.angle for p in ports1 + ports2])) > 1:
+    if len({p.angle for p in ports1 + ports2}) > 1:
         raise ValueError(
             "All ports should have the same angle\
         , got \n{}\n{}".format(
@@ -172,7 +172,7 @@ def _get_bundle_udirect_waypoints(
             dx = xs_end[0] - xs_start[0]
         end_straight_length = max(end_straight_length, dx)
 
-    if axis == "Y":
+    elif axis == "Y":
         group1.sort(key=lambda p: -p.x)
         group2.sort(key=lambda p: p.x)
 
@@ -183,10 +183,10 @@ def _get_bundle_udirect_waypoints(
 
         ys_start = [p.y for p in ports1]
 
-        if angle_start == 90:
-            dy = ys_start[0] - ys_end[0]
-        elif angle_start == 270:
+        if angle_start == 270:
             dy = ys_end[0] - ys_start[0]
+        elif angle_start == 90:
+            dy = ys_start[0] - ys_end[0]
         end_straight_length = max(end_straight_length, dy)
 
     # add offsets
@@ -337,7 +337,7 @@ def _get_bundle_uindirect_waypoints(
             )
         )
 
-    if len(set([p.angle for p in ports1])) > 1:
+    if len({p.angle for p in ports1}) > 1:
         raise ValueError(
             "All start port angles should be the same.\
         Got {}".format(
@@ -345,7 +345,7 @@ def _get_bundle_uindirect_waypoints(
             )
         )
 
-    if len(set([p.angle for p in ports2])) > 1:
+    if len({p.angle for p in ports2}) > 1:
         raise ValueError(
             "All end port angles should be the same.\
         Got {}".format(
@@ -357,11 +357,7 @@ def _get_bundle_uindirect_waypoints(
     ys_end = [p.y for p in ports2]
 
     # Compute the bundle axis
-    if ports1[0].angle in [0, 180]:
-        axis = "X"
-    else:
-        axis = "Y"
-
+    axis = "X" if ports1[0].angle in [0, 180] else "Y"
     # Split start ports in two groups:
     #    - the ones on the south/west of end ports (depending on bundle axis)
     #    - the ones on the north/east of end ports (depending on bundle axis)
@@ -515,7 +511,7 @@ def _get_bundle_uindirect_waypoints(
     def _merge_connections(list_of_points):
 
         a = [list_of_points[0]]
-        a = a + [point[1:] for point in list_of_points[1:]]
+        a += [point[1:] for point in list_of_points[1:]]
         b = np.vstack(a)
         b = remove_identicals(b)
         b = remove_flat_angles(b)
@@ -525,5 +521,3 @@ def _get_bundle_uindirect_waypoints(
     return connections
 
 
-if __name__ == "__main__":
-    pass

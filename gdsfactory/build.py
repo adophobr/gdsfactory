@@ -16,7 +16,7 @@ from gdsfactory.sweep.read_sweep import read_sweep
 
 def run_python(filename):
     """Run a python script and keep track of some context"""
-    logger.debug("Running `{}`.".format(filename))
+    logger.debug(f"Running `{filename}`.")
     command = ["python", filename]
 
     # Run the process
@@ -33,7 +33,7 @@ def run_python(filename):
         # message = "! Error in `{}`".format(basename(filename))
         # logger.error(message, exc_info=(Exception, stderr.strip(), None))
     if len(stdout.decode().strip()) > 0:
-        logger.debug("Output of python {}:\n{}".format(filename, stdout.strip()))
+        logger.debug(f"Output of python {filename}:\n{stdout.strip()}")
     return filename, process.returncode
 
 
@@ -60,26 +60,20 @@ def build_devices(regex=".*", overwrite=True):
 
     # Notify user
     logger.info(
-        "Building splits on {} threads. {} files to run.".format(
-            multiprocessing.cpu_count(), len(all_files)
-        )
+        f"Building splits on {multiprocessing.cpu_count()} threads. {len(all_files)} files to run."
     )
     logger.info(
-        "Debug information at {}".format(
-            os.path.relpath(os.path.join(CONFIG["log_directory"], "debug.log"))
-        )
+        f'Debug information at {os.path.relpath(os.path.join(CONFIG["log_directory"], "debug.log"))}'
     )
 
     # Now run all the files in batches of $CPU_SIZE.
     with Pool(processes=multiprocessing.cpu_count()) as pool:
         for filename, rc in pool.imap_unordered(run_python, all_files):
-            logger.debug("Finished {} {}".format(filename, rc))
+            logger.debug(f"Finished {filename} {rc}")
 
     # Report on what we did.
     devices = glob(os.path.join(CONFIG["gds_directory"], "*.gds"))
-    countmsg = "There are now {} GDS files in {}.".format(
-        len(devices), os.path.relpath(CONFIG["gds_directory"])
-    )
+    countmsg = f'There are now {len(devices)} GDS files in {os.path.relpath(CONFIG["gds_directory"])}.'
     logger.info(f"Finished building devices. {countmsg}")
 
 
