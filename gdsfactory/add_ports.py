@@ -318,5 +318,3 @@ def add_ports_from_labels(
     return component
 
 
-if __name__ == "__main__":
-    pass

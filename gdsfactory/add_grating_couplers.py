@@ -131,12 +131,12 @@ def add_grating_couplers_with_loopback_fiber_single(
     )
     c.add(labels)
 
-    p2 = optical_ports[0]
-    p1 = optical_ports[-1]
-
     if with_loopback:
 
-        if rotation in [0, 180]:
+        p2 = optical_ports[0]
+        p1 = optical_ports[-1]
+
+        if rotation in {0, 180}:
             length = abs(p2.x - p1.x)
             wg = c << straight(length=length, cross_section=cross_section)
             wg.rotate(rotation)
@@ -249,9 +249,7 @@ def add_grating_couplers_with_loopback_fiber_array(
     grating_separation_extracted = check_ports_have_equal_spacing(optical_ports)
     if grating_separation_extracted != grating_separation:
         raise ValueError(
-            "Grating separation must be {}. Got {}".format(
-                grating_separation, grating_separation_extracted
-            )
+            f"Grating separation must be {grating_separation}. Got {grating_separation_extracted}"
         )
 
     # Add grating references

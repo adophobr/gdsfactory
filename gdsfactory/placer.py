@@ -65,9 +65,7 @@ def placer_grid_cell_refs(
 
     if rows * cols < len(component_list):
         raise ValueError(
-            "Shape ({}, {}): Not enough emplacements ({}) for all these components ({}).".format(
-                rows, cols, len(indices), len(component_list)
-            )
+            f"Shape ({rows}, {cols}): Not enough emplacements ({len(indices)}) for all these components ({len(component_list)})."
         )
     components = []
     for component, (i, j) in zip(component_list, indices):
@@ -108,11 +106,7 @@ def pack_horizontal(
             )
         )
 
-    # Find the height of each row to fit the cells
-    # Also group the cells by row
-
-    unique_row_ids = list(set(row_ids))
-    unique_row_ids.sort()
+    unique_row_ids = sorted(set(row_ids))
     _row_to_heights = {r: [] for r in set(row_ids)}
     row_to_cells = {r: [] for r in unique_row_ids}
     for row, h, cell in zip(row_ids, heights, cells):
@@ -188,11 +182,7 @@ def pack_vertical(
             f"Got {len(cells)} cells for {len(col_ids)} col ids"
         )
 
-    # Find the width of each column to fit the cells
-    # Also group the cells by column
-
-    unique_col_ids = list(set(col_ids))
-    unique_col_ids.sort()
+    unique_col_ids = sorted(set(col_ids))
     _col_to_widths = {r: [] for r in set(col_ids)}
     col_to_cells = {r: [] for r in unique_col_ids}
     for col, w, cell in zip(col_ids, widths, cells):
@@ -286,18 +276,13 @@ def load_placer_with_does(filepath, defaults=None):
 
         doe = does[doe_name]
         # All the remaining parameters are component parameters
-        if "settings" in doe_chunk:
-            settings = doe_chunk.pop("settings")
-        else:
-            settings = {}
+        settings = doe_chunk.pop("settings") if "settings" in doe_chunk else {}
         doe["list_settings"] += get_settings_list(do_permutation, **settings)
 
         # check that the sweep is valid (only one type of component)
         assert (
             component_type == doe["component_type"]
-        ), "There can be only one component type per sweep. Got {} while expecting {}".format(
-            component_type, doe["component_type"]
-        )
+        ), f'There can be only one component type per sweep. Got {component_type} while expecting {doe["component_type"]}'
 
     return does, placer_info, component_placement, gds_files
 
@@ -336,9 +321,8 @@ def load_doe_from_cache(doe_name, doe_root_path=None):
     with open(content_file) as f:
         component_names = f.read().split(CONTENT_SEP)
 
-    gdspaths = [os.path.join(doe_dir, name + ".gds") for name in component_names]
-    components = [gf.import_gds(gdspath) for gdspath in gdspaths]
-    return components
+    gdspaths = [os.path.join(doe_dir, f"{name}.gds") for name in component_names]
+    return [gf.import_gds(gdspath) for gdspath in gdspaths]
 
 
 def load_doe_component_names(doe_name, doe_root_path=None):
@@ -436,14 +420,14 @@ def component_grid_from_yaml(filepath: Path, precision: float = 1e-9) -> Compone
 
         # If no component is loaded, build them
         if components is None:
-            print("{} - Generating components...".format(doe_name))
+            print(f"{doe_name} - Generating components...")
             components = build_components(component_type, list_settings)
 
             # After building the components, if cache enabled, save them
             if cache_enabled:
                 save_doe(doe_name, components, precision=precision)
         else:
-            logger.info("{} - Loaded components from cache".format(doe_name))
+            logger.info(f"{doe_name} - Loaded components from cache")
 
         # logger.info(doe_name, [c.name for c in components])
         # Find placer information
@@ -566,5 +550,3 @@ def build_components(
     return components
 
 
-if __name__ == "__main__":
-    pass

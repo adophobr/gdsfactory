@@ -12,8 +12,8 @@ def rectangles(widths: gf.types.Floats) -> gf.Component:
 
 
 if __name__ == "__main__":
-    c1 = rectangles((i for i in range(5)))
-    c2 = rectangles((i for i in range(6)))
+    c1 = rectangles(iter(range(5)))
+    c2 = rectangles(iter(range(6)))
 
     print(c1.name)
     print(c2.name)

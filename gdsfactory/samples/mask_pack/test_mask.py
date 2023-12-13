@@ -34,8 +34,7 @@ def coupler_te(
 ) -> Component:
     """Evanescent coupler with TE grating coupler."""
     c = gf.components.coupler(gap=gap, length=length)
-    cc = add_te(c)
-    return cc
+    return add_te(c)
 
 
 @gf.cell
@@ -48,14 +47,13 @@ def spiral_te(width: float = 0.5, length: int = 20e3) -> Component:
     """
     c = gf.components.spiral_inner_io(width=width, length=length)
     ce = gf.components.extend_ports(c)
-    cc = add_grating_couplers_with_loopback_fiber_array(
+    return add_grating_couplers_with_loopback_fiber_array(
         component=ce,
         grating_coupler=gf.components.grating_coupler_elliptical_te,
         bend=gf.components.bend_euler,
         layer_label=layer_label,
         component_name=c.name,
     )
-    return cc
 
 
 @gf.cell
@@ -70,14 +68,13 @@ def spiral_tm(width=0.5, length=20e3):
         width=width, length=length, waveguide_spacing=10, N=5
     )
     ce = gf.components.extend_ports(c)
-    cc = add_grating_couplers_with_loopback_fiber_array(
+    return add_grating_couplers_with_loopback_fiber_array(
         component=ce,
         grating_coupler=gf.components.grating_coupler_elliptical_tm,
         bend=gf.components.bend_euler,
         layer_label=layer_label,
         component_name=c.name,
     )
-    return cc
 
 
 def test_mask(

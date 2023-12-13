@@ -47,7 +47,7 @@ def log_delete(logfile: str) -> None:
         print("No logs found.")
         return
 
-    filename = os.path.join(log_directory, "{}.log".format(logfile))
+    filename = os.path.join(log_directory, f"{logfile}.log")
     subprocess.check_output(["rm", filename])
 
 
@@ -124,7 +124,7 @@ def mask() -> None:
 @click.option("--force", "-f", default=False, help="Force deletion", is_flag=True)
 def build_clean(force: bool) -> None:
     """Deletes the build folder and contents"""
-    message = "Delete {}. Are you sure?".format(CONFIG["build_directory"])
+    message = f'Delete {CONFIG["build_directory"]}. Are you sure?'
     if force or click.confirm(message, default=True):
         pb.build_clean()
 
@@ -186,7 +186,7 @@ def show(filename: str) -> None:
 @click.option("--xor", "-x", default=False, help="include xor", is_flag=True)
 def diff(gdspath1: str, gdspath2: str, xor: bool = False) -> None:
     """Show boolean difference between two GDS files."""
-    diff = gdsdiff(str(gdspath1), str(gdspath2), xor=xor)
+    diff = gdsdiff(gdspath1, gdspath2, xor=xor)
     diff.show()
 
 

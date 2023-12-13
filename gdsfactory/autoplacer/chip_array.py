@@ -50,7 +50,7 @@ class ChipArray(AutoPlacer):
         for row, col in itertools.product(
             list(range(self.rows)), list(range(self.cols))
         ):
-            name = "{}{}".format(row, col)
+            name = f"{row}{col}"
             chip = AutoPlacer(name, self.chip_width, self.chip_height)
             if self.align:
                 for corner in ap.CORNERS:
@@ -116,7 +116,7 @@ class ChipArray(AutoPlacer):
             path = os.path.join("build", "mask")
         filename = os.path.join(path, name)
         for chip in self.chips:
-            chip.write(filename + "_" + chip.name + ".gds")
+            chip.write(f"{filename}_{chip.name}.gds")
 
 
 if __name__ == "__main__":

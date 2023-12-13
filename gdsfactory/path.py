@@ -108,7 +108,7 @@ def transition(
     layers1 = {section["layer"] for section in X1.sections}
     layers2 = {section["layer"] for section in X2.sections}
 
-    has_common_layers = True if layers1.intersection(layers2) else False
+    has_common_layers = bool(layers1.intersection(layers2))
     if not has_common_layers:
         raise ValueError(
             f"transition() found no common layers X1 {layers1} and X2 {layers2}"
@@ -133,10 +133,10 @@ def transition(
 
             offset_fun = _sinusoidal_transition(offset1, offset2)
 
-            if width_type == "sine":
-                width_fun = _sinusoidal_transition(width1, width2)
-            elif width_type == "linear":
+            if width_type == "linear":
                 width_fun = _linear_transition(width1, width2)
+            elif width_type == "sine":
+                width_fun = _sinusoidal_transition(width1, width2)
             else:
                 raise ValueError(
                     "transition() width_type "
@@ -250,9 +250,6 @@ def extrude(
             lengths = np.cumsum(np.sqrt(dx ** 2 + dy ** 2))
             lengths = np.concatenate([[0], lengths])
             width = width(lengths / lengths[-1])
-        else:
-            pass
-
         points1 = p._centerpoint_offset_curve(
             points,
             offset_distance=offset + width / 2,

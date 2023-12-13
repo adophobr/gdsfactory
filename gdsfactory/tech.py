@@ -141,7 +141,7 @@ def get_layer_stack_generic(thickness_silicon_core: float = 220e-3) -> LayerStac
     """Returns generic LayerStack.
     based on paper https://www.degruyter.com/document/doi/10.1515/nanoph-2013-0034/html
     """
-    layer_stack = LayerStack(
+    return LayerStack(
         core=LayerLevel(
             layer=LAYER.WG,
             thickness=thickness_silicon_core,
@@ -208,7 +208,6 @@ def get_layer_stack_generic(thickness_silicon_core: float = 220e-3) -> LayerStac
             material="Aluminum",
         ),
     )
-    return layer_stack
 
 
 LAYER_STACK = get_layer_stack_generic()

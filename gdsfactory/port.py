@@ -412,7 +412,7 @@ def select_ports(
     from gdsfactory.component import Component, ComponentReference
 
     # Make it accept Component or ComponentReference
-    if isinstance(ports, Component) or isinstance(ports, ComponentReference):
+    if isinstance(ports, (Component, ComponentReference)):
         ports = ports.ports
 
     if layer:
@@ -472,7 +472,7 @@ def get_ports_facing(ports: List[Port], direction: str = "W") -> List[Port]:
 
     if isinstance(ports, dict):
         ports = list(ports.values())
-    elif isinstance(ports, Component) or isinstance(ports, ComponentReference):
+    elif isinstance(ports, (Component, ComponentReference)):
         ports = list(ports.ports.values())
 
     direction_ports: Dict[str, List[Port]] = {x: [] for x in ["E", "N", "W", "S"]}

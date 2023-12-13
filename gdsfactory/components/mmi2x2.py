@@ -93,8 +93,7 @@ def mmi2x2(
 
     component.absorb(mmi_section)
 
-    layers_cladding = layers_cladding or []
-    if layers_cladding:
+    if layers_cladding := layers_cladding or []:
         add_padding(
             component,
             default=cladding_offset,

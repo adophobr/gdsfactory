@@ -110,13 +110,10 @@ def cutback_bend90(
         "|": (straighty, "o1", "o2"),
     }
 
-    # Generate the sequence of staircases
-    s = ""
-    for i in range(columns):
-        if i % 2 == 0:  # even row
-            s += "A-A-B-B-" * rows + "|"
-        else:
-            s += "B-B-A-A-" * rows + "|"
+    s = "".join(
+        "A-A-B-B-" * rows + "|" if i % 2 == 0 else "B-B-A-A-" * rows + "|"
+        for i in range(columns)
+    )
     s = s[:-1]
 
     # Create the component from the sequence
@@ -193,13 +190,10 @@ def cutback_bend180(
         "|": (wg_vertical, "o1", "o2"),
     }
 
-    # Generate the sequence of staircases
-    s = ""
-    for i in range(columns):
-        if i % 2 == 0:  # even row
-            s += "D-C-" * rows + "|"
-        else:
-            s += "C-D-" * rows + "|"
+    s = "".join(
+        "D-C-" * rows + "|" if i % 2 == 0 else "C-D-" * rows + "|"
+        for i in range(columns)
+    )
     s = s[:-1]
 
     c = component_sequence(

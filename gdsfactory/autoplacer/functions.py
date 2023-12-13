@@ -81,6 +81,4 @@ def longest_common_prefix(names):
     length = max(len(n) for n in names)
     for i in range(length, 0, -1):
         prefix = names[0][:i]
-        if all(n.startswith(prefix) for n in names):
-            return prefix
-        return prefix
+        return prefix if all(n.startswith(prefix) for n in names) else prefix

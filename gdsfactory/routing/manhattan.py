@@ -59,7 +59,7 @@ def _get_unique_port_facing(
     )
 
     if len(ports_selected) > 1:
-        orientation = orientation % 360
+        orientation %= 360
         direction = O2D[orientation]
         for port in ports_selected:
             print(port)
@@ -269,9 +269,7 @@ def _generate_route_manhattan_points(
         count += 1
         if count > 40:
             raise AttributeError(
-                "Too many iterations for in {} -> out {}".format(
-                    input_port, output_port
-                )
+                f"Too many iterations for in {input_port} -> out {output_port}"
             )
         # not ready for final bend: go over possibilities
         sigp = np.sign(p[1])
@@ -310,7 +308,6 @@ def _generate_route_manhattan_points(
             if abs(p[1]) - (bs1 + bs2 + min_straight_length) > -threshold:
                 # far enough: U-turn
                 p = (min(p[0] - s, -end_straight_length) - bs2, p[1])
-                a = -sigp * 90
             else:
                 # more complex turn
                 p = (
@@ -320,7 +317,7 @@ def _generate_route_manhattan_points(
                     ),
                     p[1],
                 )
-                a = -sigp * 90
+            a = -sigp * 90
         elif a % 180 == 90:
             siga = -np.sign((a % 360) - 180)
             if not siga:
@@ -671,8 +668,7 @@ def round_corners(
             next_port = matching_ports[0]
             other_port_name = set(bend_ref.ports.keys()) - {next_port.name}
             other_port = bend_ref.ports[list(other_port_name)[0]]
-            bend_points.append(next_port.midpoint)
-            bend_points.append(other_port.midpoint)
+            bend_points.extend((next_port.midpoint, other_port.midpoint))
             previous_port_point = other_port.midpoint
 
         try:
@@ -839,7 +835,7 @@ def generate_manhattan_waypoints(
     min_straight_length = min_straight_length or x.info.get("min_length")
 
     bsx = bsy = _get_bend_size(bend90)
-    points = _generate_route_manhattan_points(
+    return _generate_route_manhattan_points(
         input_port,
         output_port,
         bsx,
@@ -848,7 +844,6 @@ def generate_manhattan_waypoints(
         end_straight_length,
         min_straight_length,
     )
-    return points
 
 
 def _get_bend_size(bend90: Component):

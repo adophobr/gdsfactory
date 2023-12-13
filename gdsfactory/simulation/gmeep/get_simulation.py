@@ -125,7 +125,7 @@ def get_simulation(
 
     """
 
-    for setting in settings.keys():
+    for setting in settings:
         if setting not in settings_meep:
             raise ValueError(f"{setting} not in {settings_meep}")
 

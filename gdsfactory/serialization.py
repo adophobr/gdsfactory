@@ -14,10 +14,7 @@ from phidl.device_layout import Path as PathPhidl
 def clean_dict(d: Dict[str, Any]) -> Dict[str, Any]:
     """Cleans dictionary keys recursively."""
     for k, v in d.items():
-        if isinstance(v, dict):
-            d[k] = clean_dict(dict(v))
-        else:
-            d[k] = clean_value_json(v)
+        d[k] = clean_dict(dict(v)) if isinstance(v, dict) else clean_value_json(v)
     return d
 
 
@@ -73,10 +70,7 @@ def clean_value_name(value: Any) -> str:
     elif isinstance(value, dict):
         d = copy.deepcopy(value)
         for k, v in d.items():
-            if isinstance(v, dict):
-                d[k] = clean_dict(v)
-            else:
-                d[k] = clean_value_name(v)
+            d[k] = clean_dict(v) if isinstance(v, dict) else clean_value_name(v)
         value = get_string(value)
     else:
         value = get_string(value)
